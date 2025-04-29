@@ -7,17 +7,17 @@ import { Public } from '../auth/decorators/public';
 export class UsersController {
   constructor(private readonly usersService: UsersService) {
   }
-
+@Public()
   @Get()
   getUsers(): any {
     return this.usersService.getAllUsers();
   }
-
+  @Public()
   @Get(':id')
   getUserById(@Param('id') id: number): any {
     return this.usersService.getUserById(id);
   }
-
+  @Public()
   @Post()
   @Public()
   create(@Body() body: CreateUserDto) {
