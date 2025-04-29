@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Users Table</title>
+  <style>
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+    th, td {
+      border: 1px solid #ddd;
+      padding: 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f4f4f4;
+    }
+    button {
+      padding: 5px 10px;
+      background-color: #007BFF;
+      color: white;
+      border: none;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+    button:hover {
+      background-color: #0056b3;
+    }
+  </style>
+</head>
+<body>
+  <h1>Users</h1>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Pseudo</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody id="users-table-body">
+      <!-- Rows will be dynamically added here -->
+    </tbody>
+  </table>
+
+  <script>
+    // Fetch users from the API and populate the table
+    fetch('http://localhost:3000/users')
+      .then(response => response.json())
+      .then(users => {
+        const tableBody = document.getElementById('users-table-body');
+        users.forEach(user => {
+          const row = document.createElement('tr');
+          row.innerHTML = `
+            <td>${user.id}</td>
+            <td>${user.pseudo}</td>
+            <td><button onclick="viewProfile('${user.id}', '${user.pseudo}', '${user.email}', '${user.bank}', '${user.victoryStats}')">Voir Profil</button></td>
+          `;
+          tableBody.appendChild(row);
+        });
+      })
+      .catch(error => console.error('Error fetching users:', error));
+      function viewProfile(userId, pseudo, email, bank, victoryStats) {
+        alert(`ID: ${userId}
+              Pseudo: ${pseudo}
+              Email: ${email}
+              Bank: ${bank}
+              Victory Stats: ${victoryStats}`);
+        // You can replace this alert with actual navigation or logic
+      }
+  
+  </script>
+</body>
+</html>
