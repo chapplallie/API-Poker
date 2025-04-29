@@ -16,7 +16,7 @@ pipeline {
   stages {
     stage('Checkout') {
       steps {
-        git branch: "${params.BRANCH}", url: 'https://github.com/tonuser/ton-projet.git'
+        git branch: "${params.BRANCH}", url: 'https://github.com/chapplallie/API-Poker.git'
       }
     }
 
