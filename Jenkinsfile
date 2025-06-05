@@ -49,15 +49,19 @@ pipeline {
       }
       steps {
         sh """
-          # Vérifier si Docker est disponible
-          which docker || echo "Docker not found in PATH"
+          # Scan OWASP Dependency Check avec Docker
+          docker run --rm \
+            -v \$(pwd):/src \
+            -v owasp-cache:/usr/share/dependency-check/data \
+            owasp/dependency-check:latest \
+            --scan /src \
+            --format HTML \
+            --format JSON \
+            --project "API-Poker" \
+            --out /src/owasp-reports \
+            --enableRetired
           
-          # Utiliser le chemin complet si nécessaire
-          /usr/bin/docker --version || echo "Docker not at /usr/bin/docker"
-          
-          # Scanner OWASP avec npm au lieu de Docker
-          npm install -g retire
-          retire --outputformat json --outputpath owasp-report.json || echo "Retire scan completed"
+          echo "OWASP Dependency Check terminé - vérifiez le dossier owasp-reports/"
         """
       }
     }
