@@ -1,7 +1,4 @@
 // jest.config.ts
-import { pathsToModuleNameMapper } from 'ts-jest';
-const { compilerOptions } = require('./tsconfig.json');
-
 export default {
   // 1) Indique à Jest d’utiliser ts-jest comme preset :
   preset: 'ts-jest',
@@ -24,8 +21,8 @@ export default {
     '^.+\\.ts$': 'ts-jest',
   },
 
-  // 7) Pour que vos alias “src/…” issus de tsconfig.json fonctionnent:
-  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths || {}, {
-    prefix: '<rootDir>/',
-  }),
+  // 7) Pour que vos alias "src/…" fonctionnent:
+  moduleNameMapper: {
+    '^src/(.*)$': '<rootDir>/src/$1',
+  },
 };
