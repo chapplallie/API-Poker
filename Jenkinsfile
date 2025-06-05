@@ -1,8 +1,6 @@
 pipeline {
   agent any
-
   environment {
-    SONAR_TOKEN = credentials('sonar-token-id')
     SONAR_HOST_URL = 'http://sonarqube:9000'
     DOCKER_IMAGE = "mon-projet:latest"
   }
@@ -13,7 +11,7 @@ pipeline {
     booleanParam(name: 'RUN_SECURITY_SCAN', defaultValue: true, description: 'Scan OWASP ?')
   }
 
-  stages {
+  stages {    
     stage('Checkout') {
       steps {
         git branch: "${params.BRANCH}", url: 'https://github.com/chapplallie/API-Poker.git'
@@ -25,23 +23,27 @@ pipeline {
         sh 'npm ci'
         sh 'npm test'
       }
-    }    stage('Static Code Analysis (SonarQube)') {
+    }
+    
+    stage('Static Code Analysis (SonarQube)') {
       steps {
-        sh '''
-          # Télécharger et installer SonarQube Scanner si pas disponible
-          if [ ! -d "sonar-scanner" ]; then
-            wget -q https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
-            unzip -q sonar-scanner-cli-4.8.0.2856-linux.zip
-            mv sonar-scanner-4.8.0.2856-linux sonar-scanner
-          fi
-          
-          # Exécuter l'analyse SonarQube
-          ./sonar-scanner/bin/sonar-scanner \
-            -Dsonar.projectKey=mon-projet \
-            -Dsonar.sources=src \
-            -Dsonar.host.url=$SONAR_HOST_URL \
-            -Dsonar.login=$SONAR_TOKEN
-        '''
+        withCredentials([string(credentialsId: 'sonar-token-id', variable: 'SONAR_TOKEN')]) {
+          sh '''
+            # Télécharger et installer SonarQube Scanner si pas disponible
+            if [ ! -d "sonar-scanner" ]; then
+              wget -q https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
+              unzip -q sonar-scanner-cli-4.8.0.2856-linux.zip
+              mv sonar-scanner-4.8.0.2856-linux sonar-scanner
+            fi
+            
+            # Exécuter l'analyse SonarQube
+            ./sonar-scanner/bin/sonar-scanner \
+              -Dsonar.projectKey=mon-projet \
+              -Dsonar.sources=src \
+              -Dsonar.host.url=${SONAR_HOST_URL} \
+              -Dsonar.login=${SONAR_TOKEN}
+          '''
+        }
       }
     }
 
