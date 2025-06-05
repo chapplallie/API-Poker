@@ -31,9 +31,10 @@ pipeline {
           sh '''
             # Télécharger et installer SonarQube Scanner si pas disponible
             if [ ! -d "sonar-scanner" ]; then
-              wget -q https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
-              unzip -q sonar-scanner-cli-4.8.0.2856-linux.zip
+              curl -sSL -o sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
+              unzip -q sonar-scanner-cli.zip
               mv sonar-scanner-4.8.0.2856-linux sonar-scanner
+              rm sonar-scanner-cli.zip
             fi
             
             # Exécuter l'analyse SonarQube
@@ -41,8 +42,7 @@ pipeline {
               -Dsonar.projectKey=mon-projet \
               -Dsonar.sources=src \
               -Dsonar.host.url=${SONAR_HOST_URL} \
-              -Dsonar.login=${SONAR_TOKEN}
-          '''
+              -Dsonar.login=${SONAR_TOKEN}          '''
         }
       }
     }
