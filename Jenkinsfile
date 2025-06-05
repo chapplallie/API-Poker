@@ -29,8 +29,8 @@ pipeline {
       steps {
         withCredentials([string(credentialsId: 'sonar-token-id', variable: 'SONAR_TOKEN')]) {
           sh '''
-            # Installer sonarqube-scanner via npm (pas de dépendance Java)
-            npm install -g sonarqube-scanner
+            # Installer sonarqube-scanner localement (pas de sudo requis)
+            npm install sonarqube-scanner
             
             # Exécuter l'analyse SonarQube avec Node.js
             npx sonarqube-scanner \
