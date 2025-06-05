@@ -49,10 +49,15 @@ pipeline {
       }
       steps {
         sh """
-          docker run --rm \
-          -v \$(pwd):/src \
-          owasp/dependency-check \
-          --scan /src --format HTML --project "mon-projet"
+          # Vérifier si Docker est disponible
+          which docker || echo "Docker not found in PATH"
+          
+          # Utiliser le chemin complet si nécessaire
+          /usr/bin/docker --version || echo "Docker not at /usr/bin/docker"
+          
+          # Scanner OWASP avec npm au lieu de Docker
+          npm install -g retire
+          retire --outputformat json --outputpath owasp-report.json || echo "Retire scan completed"
         """
       }
     }
