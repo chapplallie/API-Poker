@@ -25,19 +25,23 @@ pipeline {
         sh 'npm ci'
         sh 'npm test'
       }
-    }
-
-    stage('Static Code Analysis (SonarQube)') {
+    }    stage('Static Code Analysis (SonarQube)') {
       steps {
-        sh """
-        docker run --rm \
-          -v \$(pwd):/usr/src \
-          sonarsource/sonar-scanner-cli \
-          -Dsonar.projectKey=mon-projet \
-          -Dsonar.sources=src \
-          -Dsonar.host.url=$SONAR_HOST_URL \
-          -Dsonar.login=$SONAR_TOKEN
-        """
+        sh '''
+          # Télécharger et installer SonarQube Scanner si pas disponible
+          if [ ! -d "sonar-scanner" ]; then
+            wget -q https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
+            unzip -q sonar-scanner-cli-4.8.0.2856-linux.zip
+            mv sonar-scanner-4.8.0.2856-linux sonar-scanner
+          fi
+          
+          # Exécuter l'analyse SonarQube
+          ./sonar-scanner/bin/sonar-scanner \
+            -Dsonar.projectKey=mon-projet \
+            -Dsonar.sources=src \
+            -Dsonar.host.url=$SONAR_HOST_URL \
+            -Dsonar.login=$SONAR_TOKEN
+        '''
       }
     }
 

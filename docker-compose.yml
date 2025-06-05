@@ -14,7 +14,6 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     environment:
       JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
-
   sonarqube:
     image: sonarqube:community
     container_name: sonarqube
@@ -25,11 +24,6 @@ services:
     volumes:
       - sonarqube_data:/opt/sonarqube/data
       - sonarqube_extensions:/opt/sonarqube/extensions
-
-  sonarqube-scanner:
-    image: sonarsource/sonar-scanner-cli
-    depends_on:
-      - sonarqube
 
 volumes:
   jenkins_home:
