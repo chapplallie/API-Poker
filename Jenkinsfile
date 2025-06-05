@@ -24,22 +24,16 @@ pipeline {
         sh 'npm test'
       }
     }
-
+    
     stage('Static Code Analysis (SonarQube)') {
       steps {
         withCredentials([string(credentialsId: 'sonar-token-id', variable: 'SONAR_TOKEN')]) {
           sh '''
-            # Supprimer l'ancien scanner si présent pour forcer le téléchargement
-            rm -rf sonar-scanner
+            # Installer sonarqube-scanner via npm (pas de dépendance Java)
+            npm install -g sonarqube-scanner
             
-            # Télécharger et installer SonarQube Scanner compatible Java 11
-            curl -sSL -o sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
-            unzip -q sonar-scanner-cli.zip
-            mv sonar-scanner-4.6.2.2472-linux sonar-scanner
-            rm sonar-scanner-cli.zip
-            
-            # Exécuter l'analyse SonarQube
-            ./sonar-scanner/bin/sonar-scanner \
+            # Exécuter l'analyse SonarQube avec Node.js
+            npx sonarqube-scanner \
               -Dsonar.projectKey=mon-projet \
               -Dsonar.sources=src \
               -Dsonar.host.url=${SONAR_HOST_URL} \
@@ -55,7 +49,7 @@ pipeline {
       }
       steps {
         sh """
-        docker run --rm \
+          docker run --rm \
           -v \$(pwd):/src \
           owasp/dependency-check \
           --scan /src --format HTML --project "mon-projet"
