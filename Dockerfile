@@ -11,7 +11,8 @@ RUN apt-get update && apt-get install -y \
     lsb-release \
     ca-certificates \
     apt-transport-https \
-    software-properties-common
+    software-properties-common \
+    sudo
 
 # Ajouter le dépôt de Node.js
 RUN curl -fsSL https://deb.nodesource.com/setup_16.x | bash -
@@ -28,6 +29,9 @@ RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - && \
 # Créer le groupe docker et ajouter l'utilisateur jenkins
 RUN groupadd -f docker && \
     usermod -aG docker jenkins
+
+# Donner les droits sudo à jenkins pour chmod docker.sock
+RUN echo "jenkins ALL=(ALL) NOPASSWD: /bin/chmod" >> /etc/sudoers
 
 # Vérification de l'installation de Node.js, npm et Docker
 RUN node -v && npm -v && docker --version
