@@ -24,16 +24,16 @@ pipeline {
         sh 'npm test'
       }
     }
-    
+
     stage('Static Code Analysis (SonarQube)') {
       steps {
         withCredentials([string(credentialsId: 'sonar-token-id', variable: 'SONAR_TOKEN')]) {
           sh '''
             # Télécharger et installer SonarQube Scanner si pas disponible
             if [ ! -d "sonar-scanner" ]; then
-              curl -sSL -o sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.8.0.2856-linux.zip
+              curl -sSL -o sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
               unzip -q sonar-scanner-cli.zip
-              mv sonar-scanner-4.8.0.2856-linux sonar-scanner
+              mv sonar-scanner-4.6.2.2472-linux sonar-scanner
               rm sonar-scanner-cli.zip
             fi
             
@@ -42,7 +42,8 @@ pipeline {
               -Dsonar.projectKey=mon-projet \
               -Dsonar.sources=src \
               -Dsonar.host.url=${SONAR_HOST_URL} \
-              -Dsonar.login=${SONAR_TOKEN}          '''
+              -Dsonar.login=${SONAR_TOKEN}
+          '''
         }
       }
     }
