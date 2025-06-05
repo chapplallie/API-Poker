@@ -29,13 +29,14 @@ pipeline {
       steps {
         withCredentials([string(credentialsId: 'sonar-token-id', variable: 'SONAR_TOKEN')]) {
           sh '''
-            # Télécharger et installer SonarQube Scanner si pas disponible
-            if [ ! -d "sonar-scanner" ]; then
-              curl -sSL -o sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
-              unzip -q sonar-scanner-cli.zip
-              mv sonar-scanner-4.6.2.2472-linux sonar-scanner
-              rm sonar-scanner-cli.zip
-            fi
+            # Supprimer l'ancien scanner si présent pour forcer le téléchargement
+            rm -rf sonar-scanner
+            
+            # Télécharger et installer SonarQube Scanner compatible Java 11
+            curl -sSL -o sonar-scanner-cli.zip https://binaries.sonarsource.com/Distribution/sonar-scanner-cli/sonar-scanner-cli-4.6.2.2472-linux.zip
+            unzip -q sonar-scanner-cli.zip
+            mv sonar-scanner-4.6.2.2472-linux sonar-scanner
+            rm sonar-scanner-cli.zip
             
             # Exécuter l'analyse SonarQube
             ./sonar-scanner/bin/sonar-scanner \
