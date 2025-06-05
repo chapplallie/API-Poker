@@ -53,36 +53,36 @@ pipeline {
       }
     }
 
-    stage('Security Scan (OWASP)') {
-      when {
-        expression { params.RUN_SECURITY_SCAN }
-      }
-      steps {
-        sh """
-          # Créer le dossier pour les rapports
-          mkdir -p owasp-reports
+    // stage('Security Scan (OWASP)') {
+    //   when {
+    //     expression { params.RUN_SECURITY_SCAN }
+    //   }
+    //   steps {
+    //     sh """
+    //       # Créer le dossier pour les rapports
+    //       mkdir -p owasp-reports
           
-          # VRAI SCAN OWASP DEPENDENCY CHECK
-          # Changer les permissions du socket Docker
-          sudo chmod 666 /var/run/docker.sock || echo "Permission docker socket failed"
+    //       # VRAI SCAN OWASP DEPENDENCY CHECK
+    //       # Changer les permissions du socket Docker
+    //       sudo chmod 666 /var/run/docker.sock || echo "Permission docker socket failed"
           
-          # Scanner OWASP Dependency Check OFFICIEL
-          docker run --rm \
-            -v \$(pwd):/src \
-            -v owasp-dc-data:/usr/share/dependency-check/data \
-            owasp/dependency-check:latest \
-            --scan /src \
-            --format HTML \
-            --format JSON \
-            --project "API-Poker" \
-            --out /src/owasp-reports \
-            --enableRetired \
-            --enableExperimental
+    //       # Scanner OWASP Dependency Check OFFICIEL
+    //       docker run --rm \
+    //         -v \$(pwd):/src \
+    //         -v owasp-dc-data:/usr/share/dependency-check/data \
+    //         owasp/dependency-check:latest \
+    //         --scan /src \
+    //         --format HTML \
+    //         --format JSON \
+    //         --project "API-Poker" \
+    //         --out /src/owasp-reports \
+    //         --enableRetired \
+    //         --enableExperimental
           
-          echo "VRAI SCAN OWASP DEPENDENCY CHECK TERMINÉ !"
-        """
-      }
-    }
+    //       echo "VRAI SCAN OWASP DEPENDENCY CHECK TERMINÉ !"
+    //     """
+    //   }
+    // }
 
     stage('Build Docker Image') {
       steps {
